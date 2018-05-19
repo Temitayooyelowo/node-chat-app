@@ -3,6 +3,7 @@ const http = require('http'); //built in node module
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 
 const app = express();
@@ -18,28 +19,16 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
   //sends to only the owner of the socket
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdeAt: new Date().getTime()
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
   //with broadcasting it'll send the event to everyone EXCEPT the owner of the socket
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdeAt: new Date().getTime()
-  })
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   //custom event listener
   socket.on('createMessage', (message) => {
     console.log('Create message: ', message);
 
-    io.emit('newMessage', {
-      from: message.from,
-      text: message.text,
-      createdeAt: new Date().getTime()
-    }); //sends to all users
+    io.emit('newMessage', generateMessage(message.from, message.text)); //sends to all users
   });
 
   socket.on('disconnect', () => {
