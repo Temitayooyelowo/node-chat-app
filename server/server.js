@@ -17,6 +17,18 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
+  //register custom events
+  socket.emit('newMessage', {
+    from: 'Zarsha',
+    text: 'Hey what\'s up?',
+    createdeAt: 123123
+  }); //send to everyone connected to the chatroom
+
+  //custom event listener
+  socket.on('createMessage', (message) => {
+    console.log('Create message: ', message);
+  });
+
   socket.on('disconnect', (socket) => {
     console.log('User was disconnected');
   });
