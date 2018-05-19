@@ -17,6 +17,20 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
+  //sends to only the owner of the socket
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app',
+    createdeAt: new Date().getTime()
+  });
+
+  //with broadcasting it'll send the event to everyone EXCEPT the owner of the socket
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined',
+    createdeAt: new Date().getTime()
+  })
+
   //custom event listener
   socket.on('createMessage', (message) => {
     console.log('Create message: ', message);
@@ -28,9 +42,10 @@ io.on('connection', (socket) => {
     }); //sends to all users
   });
 
-  socket.on('disconnect', (socket) => {
+  socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
+
 });
 
 server.listen(port, () => {
