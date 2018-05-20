@@ -42,11 +42,12 @@ jQuery('#message-form').on('submit', function (e) {
 
 let locationButton = jQuery('#send-location');
 locationButton.on('click', function () {
-  if(!navigator.geolaction){
+
+  if(!navigator.geolocation){
     return alert('Geolocation not supported by your browser.');
   }
 
-  navigator.geolaction.getCurrentPosition(function(position) {
+  navigator.geolocation.getCurrentPosition(function(position) {
     //success case
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
