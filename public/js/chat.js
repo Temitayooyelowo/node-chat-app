@@ -20,11 +20,35 @@ function scrollToBottom () {
 }
 
 socket.on('connect', function() {
-  console.log('Connected to server');
+  // console.log('Connected to server');
+  let params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function (err) {
+    //acknowlegment
+    if(err) {
+      alert(err);
+      window.location.href = '/';
+    }else {
+      console.log('No error');
+    }
+
+  });
 });
 
 socket.on('disconnect', function() {
   console.log('Disconnected from server');
+});
+
+socket.on('updateUserList', function(users) {
+  //console.log('Users list', users);
+  let ol = jQuery('<ol></ol>');
+
+  users.forEach(function(user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+
+  //We don't want to append a list but completely wipe out the old one and replace it with the new one
+  jQuery('#users').html(ol);
 });
 
 //custom event
